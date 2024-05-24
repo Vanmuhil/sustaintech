@@ -43,8 +43,11 @@
 
 import React from 'react';
 import { NavLink } from 'react-router-dom';
+import { useAuth } from "./Auth";
+
 
 export default function Navbar() {
+  const auth = useAuth();
   return (
     <div>
       <nav className="navbar navbar-expand-lg sticky-top">
@@ -97,16 +100,16 @@ export default function Navbar() {
                   Clients
                 </NavLink>
               </li>
-              <li className="nav-item navHome">
+             {auth.user && <li className="nav-item navHome">
                 <NavLink className="nav-link" aria-current="page" to="/profile">
                   profile
                 </NavLink>
-              </li>
-              <li className="nav-item navHome">
+              </li>}
+             {!auth.user && <li className="nav-item navHome">
                 <NavLink className="nav-link" aria-current="page" to="/login">
                   Login
                 </NavLink>
-              </li>
+              </li>}
             </ul>
           </div>
         </div>

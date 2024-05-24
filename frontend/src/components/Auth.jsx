@@ -13,11 +13,14 @@ export const Auth = (props) => {
 
   const logout = () => {
     setUser(null);
+      localStorage.removeItem('isLoggedIn'); // Clear user data from local storage
+      window.location.reload()
+  
   };
 
   return (
     <>
-      <AuthContext.Provider value={{ user, login, logout, userId }}>
+      <AuthContext.Provider value={{ user, login , logout,  }}>
         {props.children}
       </AuthContext.Provider>
     </>

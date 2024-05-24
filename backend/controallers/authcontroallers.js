@@ -2,11 +2,12 @@ const Authmodel=require('../model/authmodel')
 const {v4:uuidv4}=require('uuid')
 const bcrypt=require('bcryptjs')
 const nodemailer = require('nodemailer')
+const updatemodel=require('../model/updatemodel')
 
 exports.signup=async(req,res)=>{
 
     //input from user 
-    const {email,password,name,cpassword,city,number}=req.body
+    const {email,password,name,cpassword}=req.body
     
     let user =await Authmodel.findOne({email})
     if(user){
@@ -25,8 +26,6 @@ exports.signup=async(req,res)=>{
     user=new Authmodel({
         email,
         name,
-        number,
-        city,
         cpassword:chashpass,
         password:hashedpass,
         activationcode
@@ -93,3 +92,18 @@ exports.signin=async(req,res)=>{
     }
     return res.status(200).json({message:"login sucessfull",user})
 }
+
+exports.userdetail=(req,res)=>{
+  Authmodel.findById(req.params.id)
+    .then(response=>res.send(response))
+    .catch(err=>console.log(err))
+//    res.status(200).json({message:"datafetch sucess",datapoda})
+    }
+
+    exports.updatedata=(req,res)=>{
+      const update = updatemodel(req.body)
+      update.save()
+      res.status(200).json({message:"data stored successfully"})
+
+
+    }

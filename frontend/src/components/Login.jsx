@@ -1,86 +1,190 @@
-import React, { useEffect, useState } from "react";
+// import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import axios from "axios";
+// import axios from "axios";
+// import { useAuth } from "./Auth";
+
+// const Login = () => {
+//   const url = "http://localhost:3000/users";
+
+//   const [inputData, setInputData] = useState({});
+//   const [serverData, setServerData] = useState([]);
+//   const [errors, setErrors] = useState("");
+//   const adminMail = "Admin@gmail.com";
+//   const adminPassword = "111111";
+//   const navigate = useNavigate();
+
+//   const auth = useAuth();
+
+//   useEffect(() => {
+//     axios
+//       .post('http://localhost:3001/auth/signin')
+//       .then((res) => console.log(res.data))
+//       .catch((err) => console.log(err));
+//   }, []);
+
+//   const handleInputData = (e) => {
+//     e.preventDefault();
+//     setInputData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+//   };
+
+//   const handlePostInput = (e) => {
+//     e.preventDefault();
+
+//     const checkuser = serverData.find((x) => x.email === inputData.email);
+
+//     if (
+//       adminMail.toLowerCase() === inputData.email.toLowerCase() &&
+//       adminPassword === inputData.password.toString()
+//     ) {
+//       navigate("/superadmin");
+//     } else if (checkuser) {
+//       if (checkuser.password === inputData.password) {
+//         navigate("/profile");
+//         auth.login(checkuser.name, checkuser.id);
+//       } else {
+//         setErrors("Password Not Match ");
+//       }
+//     } else {
+//       setErrors("User Not Found");
+//     }
+//   };
+
+//   return (
+//     <div className='Login__container'>
+//       <form className='login__box' onSubmit={handlePostInput}>
+//         <input
+//           type='email'
+//           name='email'
+//           className='input'
+//           placeholder='enter ur email'
+//           onChange={handleInputData}
+//         />
+//         <input
+//           type='password'
+//           name='password'
+//           className='input'
+//           placeholder='enter ur password'
+//           onChange={handleInputData}
+//         />
+//         {errors && <p className='error'>{errors}</p>}
+
+//         <button className='button' type='submit'>
+//           Log In
+//         </button>
+
+        // <p className='login'>
+        //   I Don't have an account &nbsp;
+        //   <NavLink className='navigate' to='/signUp'>
+        //     Sign up ?
+        //   </NavLink>
+        // </p>
+//       </form>
+//     </div>
+//   );
+// };
+
+// export default Login;
+
+
+
+import React, { useEffect, useState } from 'react';
+import axios from 'axios';
+import Superadmin from './Superadmin';
+import Profile from './Profile';
 import { useAuth } from "./Auth";
 
-const Login = () => {
-  const url = "http://localhost:3000/users";
 
-  const [inputData, setInputData] = useState({});
-  const [serverData, setServerData] = useState([]);
-  const [errors, setErrors] = useState("");
-  const adminMail = "Admin@gmail.com";
-  const adminPassword = "111111";
-  const navigate = useNavigate();
+
+function Login() {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [user, setUser] = useState(null);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const auth = useAuth();
-
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/auth/signin')
-      .then((res) => setServerData(res.data))
-      .catch((err) => console.log(err));
+    // Check for user data in local storage
+    const storedUser = JSON.parse(localStorage.getItem('isLoggedIn'));
+    if (storedUser) {
+      setUser(storedUser);
+    }
   }, []);
 
-  const handleInputData = (e) => {
-    e.preventDefault();
-    setInputData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
-  };
-
-  const handlePostInput = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const checkuser = serverData.find((x) => x.email === inputData.email);
+    const url = 'http://localhost:3001/auth/signin';
+    const data = { email, password };
+      axios.post(url,data)
+      .then(res=>{
+        console.log("backend details",res)
+        auth.login(res.data.user.name,res.data.user._id)
+         
+       setUser(res.data.user);
+        localStorage.setItem('isLoggedIn', 'true'); 
+      }).catch(err=>console.log(err))
+  }
 
-    if (
-      adminMail.toLowerCase() === inputData.email.toLowerCase() &&
-      adminPassword === inputData.password.toString()
-    ) {
-      navigate("/superadmin");
-    } else if (checkuser) {
-      if (checkuser.password === inputData.password) {
-        navigate("/profile");
-        auth.login(checkuser.name, checkuser.id);
-      } else {
-        setErrors("Password Not Match ");
-      }
-    } else {
-      setErrors("User Not Found");
-    }
+  const toggleForm = () => {
+    setError('');
+    setSuccess('');
   };
+  if (user) {
+    return (
+      <div>
+        <div className={user.userType === 'Admin' ? "admin-page" : "user-page"}>
+          <h1>Welcome {user.userType === 'Admin' ? 'Admin, ' : ''}{user.name}</h1>
+          {user.userType === 'Admin' ? <Superadmin/> : <Profile/>}
+        </div>
+      </div>
+    );
+  }
+  
 
   return (
-    <div className='Login__container'>
-      <form className='login__box' onSubmit={handlePostInput}>
-        <input
-          type='email'
-          name='email'
-          className='input'
-          placeholder='enter ur email'
-          onChange={handleInputData}
-        />
-        <input
-          type='password'
-          name='password'
-          className='input'
-          placeholder='enter ur password'
-          onChange={handleInputData}
-        />
-        {errors && <p className='error'>{errors}</p>}
-
-        <button className='button' type='submit'>
-          Log In
-        </button>
-
-        <p className='login'>
+    <div>
+      <div className='Login__container'>
+        <form className="login__box" onSubmit={handleSubmit}>
+          <h1>{'Login'}</h1>
+          <div className="form-group">
+            <label htmlFor="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div className="form-group">
+            <label htmlFor="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          {error && <div className="error-message">{error}</div>}
+          {success && <div className="success-message">{success}</div>}
+          <div className="form-group">
+            <button type='submit'>{'Login'}</button>
+          </div>
+          <div className="form-group">
+            <button type='button' onClick={toggleForm}>
+             
+            </button>
+            <p className='login'>
           I Don't have an account &nbsp;
           <NavLink className='navigate' to='/signUp'>
             Sign up ?
           </NavLink>
         </p>
-      </form>
+          </div>
+        </form>
+      </div>
     </div>
   );
-};
+}
 
 export default Login;

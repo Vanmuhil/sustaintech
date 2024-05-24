@@ -3,26 +3,31 @@ import { useAuth } from "./Auth";
 import axios from "axios";
 
 const Profile = () => {
+  
   const auth = useAuth();
   const [serverData, setServerData] = useState([]);
   const [userData, setUserData] = useState(null);
-  const [updateData, setUpdateData] = useState({});
+  const [updateData, setUpdateData] = useState();
   const [loan, setLoan] = useState(false);
+  const cities = ["Kovai", "Chennai", "Madurai", "Salem", "Thirupur"];
+  const id = auth.userId;
+    
 
   useEffect(() => {
     axios
-      .get('http://localhost:3000/users')
+       .get(`http://localhost:3001/auth/usersdetail/${id}`)
       .then((res) => setServerData(res.data))
       .catch((err) => console.log(err));
   }, []);
 
-  useEffect(() => {
-    const fetchId = serverData.find((X) => X.id === auth.userId);
+  // useEffect(() => {
+  //   const fetchId = serverData.find((X) => X.id === auth.userId);
 
-    if (fetchId) {
-      setUserData(fetchId);
-    }
-  }, [serverData, auth.userId]);
+  //   if (fetchId) {
+  //     setUserData(fetchId);
+  //   }
+  // }, [serverData, auth.userId]);
+ console.log(serverData);
 
   const handlelogOut = () => {
     auth.logout();
@@ -30,23 +35,21 @@ const Profile = () => {
 
   const handleLoadRequest = (e) => {
     e.preventDefault();
-    const mergeUpdateData = { ...userData, ...updateData};
       axios
-        .put(`http://localhost:3000/users/${userData.id}`, mergeUpdateData)
+        .post('​http://localhost:3001/auth/service',{updateData})
         .then((res) => res.data)
         .catch((err) => console.log(err));
 
       alert("updated successfully");
-
-      console.log(mergeUpdateData);
     }
   
 
   const handleLoanChanges = (e) => {
     e.preventDefault();
     setUpdateData((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    
   };
-
+  console.log(updateData);
   const handleLoan = () => {
     setLoan(!loan);
   };
@@ -61,38 +64,38 @@ const Profile = () => {
               type='text'
               name='name'
               className='input'
-              value={userData.name}
-              readOnly={true}
-              disabled={true}
+              onChange={handleLoanChanges}
+              placeholder="enter your Name"
             />
 
-            <input
-              type='email'
-              name='email'
-              className='input'
-              value={userData.email}
-              readOnly={true}
-              disabled={true}
-            />
+          
 
             <input
               type='number'
               name='number'
               className='input'
-              value={userData.number}
-              readOnly={true}
-              disabled={true}
+              onChange={handleLoanChanges}
+              placeholder="enter your Number"
             />
 
-            <input
-              type='text'
-              name='city'
-              className='input'
-              value={userData.city}
-              readOnly={true}
-              disabled={true}
-            />
-             <select name="service" onChange={handleLoanChanges} >
+<label htmlFor='city'>Select a city:</label>
+        <select
+        type="text"
+          className='input select'
+          name='city'
+          id='city'
+          onChange={handleLoanChanges}
+          required
+        >
+          <option value=''>Select a city</option>
+          {cities.map((city, index) => (
+            <option key={index} value={city}>
+              {city}
+            </option>
+          ))}
+        </select>
+             <select name="service" type="text" onChange={handleLoanChanges} >
+             <option value="">select</option>
             <option value="Project & Planning">Project & Planning</option>
             <option value="Architectural Modelling">Architectural Modelling</option>
             <option value="Foundation and Structural Work">Foundation and Structural Work</option>
@@ -102,10 +105,11 @@ const Profile = () => {
            
             <textarea
               name='description'
+              type="text"
               className='input'
               placeholder='Which Purpose Do you need the  service for...'
               onChange={handleLoanChanges}
-              required={true}
+             
             />
 
             <button className='button' type='submit'>

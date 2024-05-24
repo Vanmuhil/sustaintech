@@ -5,7 +5,7 @@ import axios from "axios";
 const Signup = () => {
   const [signUpData, setSignUpData] = useState({});
   const [errors, setErrors] = useState({});
-  const cities = ["Kovai", "Chennai", "Madurai", "Salem", "Thirupur"];
+  
 
   const url = "http://localhost:3000/users";
 
@@ -32,12 +32,7 @@ const Signup = () => {
     if (signUpData.password !== signUpData.cpassword) {
       validationErrors.cpassword = "Passwords do not match";
     }
-    if (!signUpData.number || !/^\d{10}$/.test(signUpData.number)) {
-      validationErrors.number = "Please enter a valid 10-digit contact number";
-    }
-    if (!signUpData.city) {
-      validationErrors.city = "Please select a city";
-    }
+   
     if (Object.keys(validationErrors).length > 0) {
       setErrors(validationErrors);
     } else {
@@ -91,7 +86,7 @@ const Signup = () => {
         />
         {errors.cpassword && <p className='error'>{errors.cpassword}</p>}
 
-        <input
+        {/* <input
           type='number'
           name='number'
           className='input'
@@ -99,9 +94,9 @@ const Signup = () => {
           onChange={handleSignUpData}
           required
         />
-        {errors.number && <p className='error'>{errors.number}</p>}
+        {errors.number && <p className='error'>{errors.number}</p>} */}
 
-        <label htmlFor='city'>Select a city:</label>
+        {/* <label htmlFor='city'>Select a city:</label>
         <select
           className='input select'
           name='city'
@@ -116,7 +111,7 @@ const Signup = () => {
             </option>
           ))}
         </select>
-        {errors.city && <p className='error'>{errors.city}</p>}
+        {errors.city && <p className='error'>{errors.city}</p>} */}
 
         <button className='button' type='submit'>Sign Up</button>
 
