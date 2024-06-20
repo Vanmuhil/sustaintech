@@ -85,16 +85,6 @@ const Signup = () => {
           required
         />
         {errors.cpassword && <p className='error'>{errors.cpassword}</p>}
-
-        {/* <input
-          type='number'
-          name='number'
-          className='input'
-          placeholder='Enter your number'
-          onChange={handleSignUpData}
-          required
-        />
-        {errors.number && <p className='error'>{errors.number}</p>} */}
         <button className='button' type='submit'>Sign Up</button>
 
         <p className='login'>
