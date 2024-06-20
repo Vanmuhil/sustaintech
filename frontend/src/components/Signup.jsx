@@ -95,24 +95,6 @@ const Signup = () => {
           required
         />
         {errors.number && <p className='error'>{errors.number}</p>} */}
-
-        {/* <label htmlFor='city'>Select a city:</label>
-        <select
-          className='input select'
-          name='city'
-          id='city'
-          onChange={handleSignUpData}
-          required
-        >
-          <option value=''>Select a city</option>
-          {cities.map((city, index) => (
-            <option key={index} value={city}>
-              {city}
-            </option>
-          ))}
-        </select>
-        {errors.city && <p className='error'>{errors.city}</p>} */}
-
         <button className='button' type='submit'>Sign Up</button>
 
         <p className='login'>
